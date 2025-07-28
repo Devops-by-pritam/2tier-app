@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: tusk03/simple-frontend-nginx:latest
+          image: tusk03/simple-frontend:latest
           ports:
             - containerPort: 80
