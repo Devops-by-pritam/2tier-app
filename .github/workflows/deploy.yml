@@ -1,0 +1,49 @@
+name: CI/CD for Frontend and Backend
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build and Push Backend Image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/simple-backend-node ./backend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/simple-backend-node
+
+      - name: Build and Push Frontend Image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/simple-frontend-nginx ./frontend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/simple-frontend-nginx
+
+      - name: Install OpenShift CLI
+        run: |
+          curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz
+          tar -xzf openshift-client-linux.tar.gz
+          sudo mv oc kubectl /usr/local/bin/
+
+      - name: Login to OpenShift
+        run: oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TOKEN }} --insecure-skip-tls-verify
+
+      - name: Set Project
+        run: oc project ${{ secrets.OPENSHIFT_NAMESPACE }}
+
+      - name: Apply Backend Manifests
+        run: |
+          oc apply -f backend/k8s/deployment.yaml
+          oc apply -f backend/k8s/service.yaml
+          oc apply -f backend/k8s/route.yaml
+
+      - name: Apply Frontend Manifests
+        run: |
+          oc apply -f frontend/k8s/deployment.yaml
+          oc apply -f frontend/k8s/service.yaml
+          oc apply -f frontend/k8s/route.yaml
