@@ -16,4 +16,4 @@ spec:
         - name: frontend
           image: tusk03/simple-frontend:latest
           ports:
-            - containerPort: 3000
+            - containerPort: 8080
