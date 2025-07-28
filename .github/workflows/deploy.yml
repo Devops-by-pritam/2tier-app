@@ -21,8 +21,8 @@ jobs:
 
       - name: Build and Push Frontend Image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/simple-frontend-nginx ./frontend
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/simple-frontend-nginx
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/simple-frontend ./frontend
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/simple-frontend
 
       - name: Install OpenShift CLI
         run: |
