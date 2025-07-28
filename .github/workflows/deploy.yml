@@ -41,9 +41,11 @@ jobs:
           oc apply -f backend/k8s/deployment.yaml
           oc apply -f backend/k8s/service.yaml
           oc apply -f backend/k8s/route.yaml
+        run: oc rollout restart deployment/backend -n ${{ secrets.OPENSHIFT_NAMESPACE }}
 
       - name: Apply Frontend Manifests
         run: |
           oc apply -f frontend/k8s/deployment.yaml
           oc apply -f frontend/k8s/service.yaml
           oc apply -f frontend/k8s/route.yaml
+        run: oc rollout restart deployment/frontend -n ${{ secrets.OPENSHIFT_NAMESPACE }}

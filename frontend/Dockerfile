@@ -1,2 +1,2 @@
-FROM nginx:alpine
-COPY src/public/ /usr/share/nginx/html
+FROM httpd:alpine
+COPY src/public/ /usr/local/apache2/htdocs/
